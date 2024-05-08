@@ -1,13 +1,11 @@
-add_rules("mode.release", "mode.debug")
+add_rules("mode.debug", "mode.release")
 
 set_languages('c++latest')
+set_toolchains('clang')
+set_runtimes("c++_static")
+add_ldflags("-lc++abi")
 
-target('syntax-analyzer')
-  set_kind('binary')
-  add_files('src/*.cpp')
-  add_cxxflags('-stdlib=libc++')
-  add_ldflags('-stdlib=libc++')
-  set_toolchains('clang')
+target('syntax-analyzer', { files = 'src/*.cpp' })
   after_build(function (target)
     os.cp("input/*", target:targetdir())
   end)
