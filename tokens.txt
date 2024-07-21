@@ -2,6 +2,7 @@ int	<KW,1>
 a	<Ident,a>
 =	<OP,11>
 10	<INT,10>
+;	<OP,19>
 void	<KW,2>
 main	<Ident,main>
 (	<SE,20>
@@ -11,8 +12,10 @@ int	<KW,1>
 b	<Ident,b>
 =	<OP,11>
 2	<INT,2>
+;	<OP,19>
 return	<KW,3>
 b	<Ident,b>
 -	<OP,7>
 a	<Ident,a>
+;	<OP,19>
 }	<SE,23>
