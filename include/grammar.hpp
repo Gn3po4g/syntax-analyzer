@@ -11,16 +11,16 @@
 namespace analyzer {
 
 using std::map;
-using std::set;
 using std::string;
 using std::string_view;
 using std::vector;
 
-using sequence = vector<string>;
+using phrase = std::vector<string>;
+using set = std::set<string>;
 
 struct grammar_t {
   string left;
-  sequence right;
+  phrase right;
 };
 
 struct token_t {
@@ -28,15 +28,15 @@ struct token_t {
   string type;
 };
 
-using ff_t = map<string, set<string>>;
-using table_t = map<string, map<string, sequence>>;
+using ff_t = map<string, set>;
+using table_t = map<string, map<string, phrase>>;
 
 constexpr string EMPTY = "$";
 constexpr string END = "#";
 constexpr std::array<string, 25> terminals{
-    "const",  ",", ";",   "Ident", "=",  "int", "(", ")", "void",
-    "{",      "}", "INT", "+",     "-",  "!",   "*", "/", "%",
-    "return", "<", ">",   "<=",    ">=", "==",  "!="};
+  "const",  ",", ";",   "Ident", "=",  "int", "(", ")", "void",
+  "{",      "}", "INT", "+",     "-",  "!",   "*", "/", "%",
+  "return", "<", ">",   "<=",    ">=", "==",  "!="};
 
 void parse_grammar(string_view);
 void parse_token(string_view);

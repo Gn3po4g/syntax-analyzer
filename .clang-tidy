@@ -1,1 +1,11 @@
-Checks: 'clang-diagnostic-*, clang-analyzer-*, google-*, readability-*, modernize-*'
+Checks: |-
+  bugprone-*
+  concurrency-*
+  cppcoreguidelines-*
+  google-*
+  hicpp-*
+  misc-*
+  modernize-*
+  readability-*
+  -cppcoreguidelines-avoid-non-const-global-variables
+

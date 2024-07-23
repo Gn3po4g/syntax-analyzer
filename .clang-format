@@ -1,2 +1,7 @@
 Language: Cpp
 BasedOnStyle: Google
+AccessModifierOffset: -2
+AlignArrayOfStructures: Left
+ContinuationIndentWidth: 2
+AlignOperands: AlignAfterOperator
+AllowShortCaseLabelsOnASingleLine: true

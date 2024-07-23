@@ -18,7 +18,7 @@ vector<token_t> tokens;
 ff_t first;
 ff_t follow;
 table_t table;
-set<string> non_terminals;
+set non_terminals;
 string start;
 
 void parse_token(const string_view file_name) {
@@ -34,7 +34,7 @@ void parse_token(const string_view file_name) {
       const auto match1 = match[1].str();
       const auto match2 = match[2].str();
       tokens.emplace_back(
-          match1, match2 == "Ident" || match2 == "INT" ? match2 : match1);
+        match1, match2 == "Ident" || match2 == "INT" ? match2 : match1);
     }
   }
   tokens.emplace_back(END, END);
@@ -59,13 +59,13 @@ void parse_grammar(const string_view file_name) {
       }
       const auto right = match[2].str();
       const auto symbols =
-          right | std::views::split(' ') | std::ranges::to<sequence>();
+        right | std::views::split(' ') | std::ranges::to<phrase>();
       grammars.emplace_back(left, symbols);
     }
   }
 }
 
-auto changed_after_insert(set<string> &set, auto &&items) -> bool {
+auto changed_after_insert(set &set, auto &&items) -> bool {
   bool changed = false;
   for (const auto &item : items) {
     if (!set.contains(item)) {
@@ -76,8 +76,8 @@ auto changed_after_insert(set<string> &set, auto &&items) -> bool {
   return changed;
 }
 
-auto get_range_first(ff_t &table, auto &&symbols) -> set<string> {
-  set<string> res{EMPTY};
+auto get_range_first(ff_t &table, auto &&symbols) -> set {
+  set res{EMPTY};
   if (!std::ranges::equal(res, symbols)) {
     for (const auto &symbol : symbols) {
       if (res.contains(EMPTY)) {
@@ -93,12 +93,11 @@ auto get_range_first(ff_t &table, auto &&symbols) -> set<string> {
 }
 
 void init_first() noexcept {
-  // Init first set
   for (const auto &item : terminals) {
-    first.emplace(item, set<string>{item});
+    first.emplace(item, set{item});
   }
   for (const auto &item : non_terminals) {
-    first.emplace(item, set<string>{});
+    first.emplace(item, set{});
   }
 
   bool changed = true;
@@ -114,16 +113,16 @@ void init_first() noexcept {
   }
 }
 
-struct not_empty_s {
+const struct not_empty_s {
   auto operator()(string_view str) { return str != EMPTY; }
 } not_empty;
 
 void init_follow() noexcept {
   for (const auto &item : non_terminals) {
     if (item == start) {
-      follow.emplace(item, set<string>{END});
+      follow.emplace(item, set{END});
     } else {
-      follow.emplace(item, set<string>{});
+      follow.emplace(item, set{});
     }
   }
 
@@ -142,10 +141,10 @@ void init_follow() noexcept {
           continue;
         }
         const auto range_first = get_range_first(
-            first, std::ranges::subrange(std::ranges::next(it), right.end()));
+          first, std::ranges::subrange(std::ranges::next(it), right.end()));
 
         changed |= changed_after_insert(
-            follow.at(*it), range_first | std::views::filter(not_empty));
+          follow.at(*it), range_first | std::views::filter(not_empty));
 
         if (range_first.contains(EMPTY) ||
             std::ranges::next(it) == right.end()) {
@@ -158,7 +157,7 @@ void init_follow() noexcept {
 
 void init_table() noexcept {
   for (const auto &non_term : non_terminals) {
-    table.emplace(non_term, map<string, sequence>{});
+    table.emplace(non_term, map<string, phrase>{});
   }
   std::ranges::for_each(grammars, [](const auto &production) {
     const auto &[left, right] = production;
@@ -185,7 +184,7 @@ void analyse() noexcept {
   int seq = 0;
 
   std::ofstream outfile("output.txt");
-  
+
   for (auto token = tokens.begin(); token != tokens.end();) {
     std::print(outfile, "{:<5}[top: {:<15}] [current: {:<10}]  ", ++seq,
                symbol_stack.top(), token->value);
