@@ -1,5 +1,5 @@
-#ifndef GRAMMAR_H
-#define GRAMMAR_H
+#ifndef _ANALYZER_GRAMMAR_H_
+#define _ANALYZER_GRAMMAR_H_
 
 #include <array>
 #include <map>
@@ -8,42 +8,43 @@
 #include <string_view>
 #include <vector>
 
+namespace analyzer {
+
+using std::map;
+using std::set;
+using std::string;
+using std::string_view;
+using std::vector;
+
+using sequence = vector<string>;
+
 struct grammar_t {
-  std::string left;
-  std::vector<std::string> right;
+  string left;
+  sequence right;
 };
 
 struct token_t {
-  std::string value;
-  std::string type;
+  string value;
+  string type;
 };
 
-using ff_t    = std::map<std::string, std::set<std::string>>;
-using table_t = std::map<std::string, std::map<std::string, std::vector<std::string>>>;
+using ff_t = map<string, set<string>>;
+using table_t = map<string, map<string, sequence>>;
 
-constexpr std::string EMPTY = "$";
-constexpr std::string END   = "#";
-constexpr std::array<std::string, 26> terminal{EMPTY,  "const",  ",", ";",   "Ident", "=",  "int", "(", ")",
-                                               "void", "{",      "}", "INT", "+",     "-",  "!",   "*", "/",
-                                               "%",    "return", "<", ">",   "<=",    ">=", "==",  "!="};
+constexpr string EMPTY = "$";
+constexpr string END = "#";
+constexpr std::array<string, 25> terminals{
+    "const",  ",", ";",   "Ident", "=",  "int", "(", ")", "void",
+    "{",      "}", "INT", "+",     "-",  "!",   "*", "/", "%",
+    "return", "<", ">",   "<=",    ">=", "==",  "!="};
 
-auto parse_token(std::string_view) -> std::vector<token_t>;
+void parse_grammar(string_view);
+void parse_token(string_view);
+void init_first() noexcept;
+void init_follow() noexcept;
+void init_table() noexcept;
+void analyse() noexcept;
 
-class Grammar {
-public:
-  explicit Grammar(std::string_view);
-  void Analyse(const std::vector<token_t> &);
-
-private:
-  void ReadGrammar(std::string_view);
-  void InitFirst();
-  void InitFollow();
-  void InitTable();
-
-  std::vector<grammar_t> grammars;
-  ff_t first;
-  ff_t follow;
-  table_t table;
-};
+}  // namespace analyzer
 
 #endif

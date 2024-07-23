@@ -1,15 +1,19 @@
-#include "grammar.hpp"
-#include <ios>
 #include <print>
+#include <stdexcept>
+
+#include "grammar.hpp"
 
 auto main() -> int {
   try {
-    const auto tokens = parse_token("tokens.txt");
-    Grammar("grammars.txt").Analyse(tokens);
+    analyzer::parse_grammar("grammars.txt");
+    analyzer::parse_token("tokens.txt");
+    analyzer::init_first();
+    analyzer::init_follow();
+    analyzer::init_table();
+    analyzer::analyse();
     std::println("Analysis completed.");
-  } catch (const std::ios_base::failure &e) {
-    std::println(stderr, "{}", e.what());
-    return 1;
+  } catch (const std::invalid_argument &e) {
+    std::println("{}", e.what());
   }
   return 0;
 }
