@@ -2,22 +2,27 @@
 #define _ANALYZER_HELPER_H_
 
 #include <format>
-#include <string>
-#include <string_view>
+#include <ranges>
 #include <vector>
 
+namespace std {
 template <typename T>
-struct std::formatter<std::vector<T>> : std::formatter<std::string_view> {
-  constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+struct formatter<vector<T>> : formatter<T> {
+  using base = formatter<T>;
 
-  auto format(const std::vector<T>& vec, std::format_context& ctx) const {
-    std::string res;
-    for (const auto& elem : vec) {
-      std::format_to(std::back_inserter(res), "{} ", elem);
+  auto format(const vector<T>& vec, format_context& ctx) const {
+    if (vec.empty()) {
+      return format_to(ctx.out(), "");
     }
-    res.pop_back();
-    return std::formatter<std::string_view>::format(res, ctx);
+
+    for (const auto& elem : vec | views::take(vec.size() - 1)) {
+      base::format(elem, ctx);
+      format_to(ctx.out(), " ");
+    }
+    return base::format(vec.back(), ctx);
   }
 };
+
+}  // namespace std
 
 #endif
